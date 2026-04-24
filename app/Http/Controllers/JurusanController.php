@@ -7,9 +7,18 @@ use App\Models\Jurusan;
 
 class JurusanController extends Controller
 {
-    public function index()
+    public function index(Request $request) // TAMBAH Request
     {
-        $jurusan = Jurusan::all();
+        // TAMBAHAN SEARCH + PAGINATION
+        $search = $request->search;
+
+        if ($search) {
+            $jurusan = Jurusan::where('nama_jurusan', 'like', "%$search%")
+                        ->paginate(5);
+        } else {
+            $jurusan = Jurusan::paginate(5);
+        }
+
         return view('jurusan.index', compact('jurusan'));
     }
 
@@ -20,6 +29,12 @@ class JurusanController extends Controller
 
     public function store(Request $request)
     {
+        // TAMBAHAN VALIDASI
+        $request->validate([
+            'nama_jurusan' => 'required',
+            'akreditasi' => 'required'
+        ]);
+
         Jurusan::create($request->all());
         return redirect()->route('jurusan.index');
     }
@@ -32,6 +47,12 @@ class JurusanController extends Controller
 
     public function update(Request $request, $id)
     {
+        // TAMBAHAN VALIDASI
+        $request->validate([
+            'nama_jurusan' => 'required',
+            'akreditasi' => 'required'
+        ]);
+
         $data = Jurusan::findOrFail($id);
         $data->update($request->all());
         return redirect()->route('jurusan.index');

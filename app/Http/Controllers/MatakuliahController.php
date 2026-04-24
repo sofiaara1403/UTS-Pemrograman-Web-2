@@ -8,10 +8,30 @@ use App\Models\Jurusan;
 
 class MatakuliahController extends Controller
 {
-    public function index()
+    public function index(Request $request) // TAMBAH
     {
-        $matakuliah = Matakuliah::with('jurusan')->get();
-        return view('matakuliah.index', compact('matakuliah'));
+        $search = $request->search;
+
+        if ($search) {
+            $matakuliah = Matakuliah::with('jurusan')
+                ->where('nama_matakuliah', 'like', "%$search%")
+                ->paginate(5);
+        } else {
+            $matakuliah = Matakuliah::with('jurusan')->paginate(5);
+        }
+
+        // 🔥 TAMBAHAN FILTER
+        if ($request->id_jurusan) {
+            $matakuliah = Matakuliah::with('jurusan')
+                ->where('id_jurusan', $request->id_jurusan)
+                ->paginate(5)
+                ->withQueryString();
+        }
+
+        // 🔥 TAMBAHAN DATA JURUSAN
+        $jurusan = Jurusan::all();
+
+        return view('matakuliah.index', compact('matakuliah', 'jurusan'));
     }
 
     public function create()
@@ -22,6 +42,12 @@ class MatakuliahController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'nama_matakuliah' => 'required',
+            'sks' => 'required|numeric',
+            'id_jurusan' => 'required'
+        ]);
+
         Matakuliah::create($request->all());
         return redirect()->route('matakuliah.index');
     }
@@ -35,6 +61,12 @@ class MatakuliahController extends Controller
 
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'nama_matakuliah' => 'required',
+            'sks' => 'required|numeric',
+            'id_jurusan' => 'required'
+        ]);
+
         $data = Matakuliah::findOrFail($id);
         $data->update($request->all());
         return redirect()->route('matakuliah.index');

@@ -8,10 +8,31 @@ use App\Models\Jurusan;
 
 class MahasiswaController extends Controller
 {
-    public function index()
+    public function index(Request $request) // TAMBAH
     {
-        $mahasiswa = Mahasiswa::with('jurusan')->get();
-        return view('mahasiswa.index', compact('mahasiswa'));
+        // SEARCH + PAGINATION
+        $search = $request->search;
+
+        if ($search) {
+            $mahasiswa = Mahasiswa::with('jurusan')
+                ->where('nama', 'like', "%$search%")
+                ->paginate(5);
+        } else {
+            $mahasiswa = Mahasiswa::with('jurusan')->paginate(5);
+        }
+
+        // 🔥 TAMBAHAN FILTER JURUSAN (TANPA MENGUBAH YANG LAMA)
+        if ($request->id_jurusan) {
+            $mahasiswa = Mahasiswa::with('jurusan')
+                ->where('id_jurusan', $request->id_jurusan)
+                ->paginate(5)
+                ->withQueryString();
+        }
+
+        // 🔥 TAMBAHAN DATA JURUSAN (buat dropdown)
+        $jurusan = Jurusan::all();
+
+        return view('mahasiswa.index', compact('mahasiswa', 'jurusan'));
     }
 
     public function create()
@@ -22,6 +43,12 @@ class MahasiswaController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'nim' => 'required',
+            'nama' => 'required',
+            'id_jurusan' => 'required'
+        ]);
+
         Mahasiswa::create($request->all());
         return redirect()->route('mahasiswa.index');
     }
@@ -35,6 +62,12 @@ class MahasiswaController extends Controller
 
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'nim' => 'required',
+            'nama' => 'required',
+            'id_jurusan' => 'required'
+        ]);
+
         $data = Mahasiswa::findOrFail($id);
         $data->update($request->all());
         return redirect()->route('mahasiswa.index');
