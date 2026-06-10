@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Jurusan;
+use App\Exports\JurusanExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class JurusanController extends Controller
 {
@@ -63,4 +67,25 @@ class JurusanController extends Controller
         Jurusan::destroy($id);
         return redirect()->route('jurusan.index');
     }
+
+    public function exportExcel()
+{
+return Excel::download(
+new JurusanExport,
+'data_jurusan.xlsx'
+);
+}
+
+public function exportPdf()
+{
+    $jurusan = Jurusan::all();
+
+    $pdf = Pdf::loadView(
+        'jurusan.print',
+        compact('jurusan')
+    );
+
+    return $pdf->download('data_jurusan.pdf');
+}
+
 }

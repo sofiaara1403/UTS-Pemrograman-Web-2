@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Matakuliah;
 use App\Models\Jurusan;
+use App\Exports\MatakuliahExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class MatakuliahController extends Controller
 {
@@ -77,4 +80,25 @@ class MatakuliahController extends Controller
         Matakuliah::destroy($id);
         return redirect()->route('matakuliah.index');
     }
+
+    public function exportExcel()
+{
+    return Excel::download(
+        new MatakuliahExport,
+        'data_matakuliah.xlsx'
+    );
+}
+
+public function exportPdf()
+{
+    $matakuliah = Matakuliah::with('jurusan')->get();
+
+    $pdf = Pdf::loadView(
+        'matakuliah.print',
+        compact('matakuliah')
+    );
+
+    return $pdf->download('data_matakuliah.pdf');
+}
+
 }

@@ -39,9 +39,24 @@ value="{{ request('search') }}">
 </div>
 </div>
 
-<a href="{{ route('matakuliah.create') }}" class="btn btn-warning mb-3 btn-soft">
+<div class="mb-3 d-flex gap-2">
+
+<a href="{{ route('matakuliah.create') }}"
+class="btn btn-warning btn-soft">
 + Tambah Matakuliah
 </a>
+
+<a href="{{ route('matakuliah.export.excel') }}"
+class="btn btn-primary">
+Export Excel
+</a>
+
+<a href="{{ route('matakuliah.export.pdf') }}"
+class="btn btn-danger">
+Export PDF
+</a>
+
+</div>
 
 <div class="card shadow glass">
 <div class="card-body">

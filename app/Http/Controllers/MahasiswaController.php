@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Mahasiswa;
 use App\Models\Jurusan;
+use App\Exports\MahasiswaExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class MahasiswaController extends Controller
 {
@@ -78,4 +81,26 @@ class MahasiswaController extends Controller
         Mahasiswa::destroy($id);
         return redirect()->route('mahasiswa.index');
     }
+
+    public function exportExcel()
+{
+    return Excel::download(
+        new MahasiswaExport,
+        'data_mahasiswa.xlsx'
+    );
+}
+
+public function exportPdf()
+{
+    $mahasiswa = Mahasiswa::with('jurusan')->get();
+
+    $pdf = Pdf::loadView(
+        'mahasiswa.print',
+        compact('mahasiswa')
+    );
+
+    return $pdf->download('data_mahasiswa.pdf');
+}
+
+
 }

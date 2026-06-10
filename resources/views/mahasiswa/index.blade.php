@@ -80,6 +80,25 @@ value="{{ request('search') }}">
 {{ $mahasiswa->links() }}
 </div>
 
+<div class="mb-3 d-flex gap-2">
+
+<a href="{{ route('mahasiswa.create') }}"
+class="btn btn-success btn-soft">
++ Tambah Mahasiswa
+</a>
+
+<a href="{{ route('mahasiswa.export.excel') }}"
+class="btn btn-primary">
+Export Excel
+</a>
+
+<a href="{{ route('mahasiswa.export.pdf') }}"
+class="btn btn-danger">
+Export PDF
+</a>
+
+</div>
+
 </div>
 </div>
 

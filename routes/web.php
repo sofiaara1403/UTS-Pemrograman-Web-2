@@ -32,9 +32,38 @@ Route::middleware(['auth'])->group(function () {
 
     // 🔥 CRUD UTAMA (WAJIB SOAL)
     Route::resource('jurusan', JurusanController::class);
+    Route::get(
+'/jurusan/export/excel',
+[JurusanController::class, 'exportExcel']
+)->name('jurusan.export.excel');
+
     Route::resource('mahasiswa', MahasiswaController::class);
+    Route::get(
+    '/mahasiswa/export/excel',
+    [MahasiswaController::class, 'exportExcel']
+)->name('mahasiswa.export.excel');
     Route::resource('matakuliah', MatakuliahController::class);
 });
+
+Route::get(
+    '/jurusan/export/pdf',
+    [JurusanController::class, 'exportPdf']
+)->name('jurusan.export.pdf');
+
+Route::get(
+    '/mahasiswa/export/pdf',
+    [MahasiswaController::class, 'exportPdf']
+)->name('mahasiswa.export.pdf');
+
+Route::get(
+    '/matakuliah/export/excel',
+    [MatakuliahController::class, 'exportExcel']
+)->name('matakuliah.export.excel');
+
+Route::get(
+    '/matakuliah/export/pdf',
+    [MatakuliahController::class, 'exportPdf']
+)->name('matakuliah.export.pdf');
 
 // auth bawaan (login, register, dll)
 require __DIR__.'/auth.php';
